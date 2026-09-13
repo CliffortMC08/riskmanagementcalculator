@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Deriv Risk Calculator</title>
+<title>Synthetic Indices Risk Calculator</title>
 <style>
     :root {
-        --bg: #0f0f11;
-        --card: #18181b;
-        --border: #27272a;
-        --text: #fafafa;
+        --bg: #0c0c0e;
+        --card: #161618;
+        --border: #2a2a2e;
+        --text: #f4f4f5;
         --muted: #a1a1aa;
-        --accent: #3b82f6;
         --green: #22c55e;
         --red: #ef4444;
-        --input: #27272a;
+        --blue: #3b82f6;
+        --input: #1f1f23;
     }
 
     * {
@@ -31,43 +31,31 @@
         padding: 20px;
         display: flex;
         justify-content: center;
-        align-items: flex-start;
     }
 
     .container {
         width: 100%;
-        max-width: 460px;
+        max-width: 480px;
         background: var(--card);
         border: 1px solid var(--border);
         border-radius: 20px;
         padding: 28px 24px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     }
 
     header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        text-align: center;
         margin-bottom: 28px;
     }
 
-    h1 {
-        font-size: 1.35rem;
+    header h1 {
+        font-size: 1.4rem;
         font-weight: 700;
+        margin-bottom: 4px;
     }
 
-    .theme-btn {
-        background: var(--input);
-        border: 1px solid var(--border);
-        color: var(--text);
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
-        cursor: pointer;
-        font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    header p {
+        font-size: 0.85rem;
+        color: var(--muted);
     }
 
     .section {
@@ -95,7 +83,6 @@
         border-radius: 12px;
         font-size: 1rem;
         outline: none;
-        transition: 0.2s;
     }
 
     input:focus, select:focus {
@@ -112,7 +99,6 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
-        margin-bottom: 4px;
     }
 
     .dir-btn {
@@ -140,7 +126,7 @@
 
     .calc-btn {
         width: 100%;
-        margin-top: 18px;
+        margin-top: 20px;
         padding: 16px;
         background: white;
         color: #111;
@@ -149,33 +135,39 @@
         font-size: 1.05rem;
         font-weight: 700;
         cursor: pointer;
-        transition: 0.2s;
     }
 
     .calc-btn:hover {
-        opacity: 0.9;
+        opacity: 0.92;
+    }
+
+    .specs {
+        font-size: 0.78rem;
+        color: var(--muted);
+        margin-top: 8px;
+        min-height: 20px;
     }
 
     /* Results */
     #results {
         display: none;
         margin-top: 28px;
-        background: #141416;
+        background: #121214;
         border: 1px solid var(--border);
         border-radius: 16px;
-        padding: 20px;
+        padding: 22px;
         animation: fadeIn 0.3s ease;
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(8px); }
+        from { opacity: 0; transform: translateY(6px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
     .result-main {
         text-align: center;
-        margin-bottom: 20px;
         padding-bottom: 18px;
+        margin-bottom: 18px;
         border-bottom: 1px solid var(--border);
     }
 
@@ -186,7 +178,7 @@
     }
 
     .result-main .value {
-        font-size: 2rem;
+        font-size: 2.1rem;
         font-weight: 800;
     }
 
@@ -231,25 +223,18 @@
         display: block;
         margin-top: 8px;
     }
-
-    .specs {
-        font-size: 0.75rem;
-        color: var(--muted);
-        margin-top: 6px;
-    }
 </style>
 </head>
 <body>
-
 <div class="container">
     <header>
-        <h1>Deriv Risk Calculator</h1>
-        <button class="theme-btn" onclick="toggleTheme()">☀</button>
+        <h1>Synthetic Indices Calculator</h1>
+        <p>Position Size & Risk Manager for Deriv</p>
     </header>
 
     <!-- Instrument -->
     <div class="section">Instrument</div>
-    <select id="instrument" onchange="showSpecs()">
+    <select id="instrument" onchange="updateSpecs()">
         <option value="">Select instrument...</option>
         <optgroup label="Volatility Indices">
             <option value="v10">Volatility 10</option>
@@ -285,7 +270,7 @@
     <div class="section">Account</div>
     <div class="grid">
         <div>
-            <label>Balance</label>
+            <label>Balance ($)</label>
             <input type="number" id="balance" placeholder="1000" step="any">
         </div>
         <div>
@@ -294,9 +279,9 @@
         </div>
     </div>
 
-    <!-- Trade -->
+    <!-- Trade Setup -->
     <div class="section">Trade Setup</div>
-    
+
     <label>Direction</label>
     <div class="direction">
         <button class="dir-btn buy active" onclick="setDirection('buy', this)">BUY</button>
@@ -304,7 +289,7 @@
     </div>
 
     <label style="margin-top:14px;">Entry Price</label>
-    <input type="number" id="entry" placeholder="Enter price" step="any">
+    <input type="number" id="entry" placeholder="Entry price" step="any">
 
     <div class="grid" style="margin-top:12px;">
         <div>
@@ -355,135 +340,101 @@
 </div>
 
 <script>
-    // Instrument data
+    // Accurate synthetic indices data
     const instruments = {
-        v10:      { min: 0.50,  step: 0.01,  pv: 1 },
-        v25:      { min: 0.50,  step: 0.01,  pv: 1 },
-        v50:      { min: 4.00,  step: 0.01,  pv: 1 },
-        v75:      { min: 0.001, step: 0.001, pv: 1 },
-        v100:     { min: 0.50,  step: 0.01,  pv: 1 },
-        v10_1s:   { min: 0.20,  step: 0.01,  pv: 1 },
-        v25_1s:   { min: 0.005, step: 0.001, pv: 1 },
-        v50_1s:   { min: 0.005, step: 0.001, pv: 1 },
-        v75_1s:   { min: 0.005, step: 0.001, pv: 1 },
-        v100_1s:  { min: 0.10,  step: 0.01,  pv: 1 },
-        boom500:  { min: 0.20,  step: 0.01,  pv: 1 },
-        boom1000: { min: 0.20,  step: 0.01,  pv: 1 },
-        crash500: { min: 0.20,  step: 0.01,  pv: 1 },
-        crash1000:{ min: 0.20,  step: 0.01,  pv: 1 },
-        step:     { min: 0.10,  step: 0.10,  pv: 10 },
-        jump10:   { min: 0.01,  step: 0.01,  pv: 1 },
-        jump25:   { min: 0.01,  step: 0.01,  pv: 1 },
-        jump50:   { min: 0.01,  step: 0.01,  pv: 1 },
-        jump100:  { min: 0.01,  step: 0.01,  pv: 1 }
+        v10:      { min: 0.50,  step: 0.01,  pv: 1, name: "Volatility 10" },
+        v25:      { min: 0.50,  step: 0.01,  pv: 1, name: "Volatility 25" },
+        v50:      { min: 4.00,  step: 0.01,  pv: 1, name: "Volatility 50" },
+        v75:      { min: 0.001, step: 0.001, pv: 1, name: "Volatility 75" },
+        v100:     { min: 0.50,  step: 0.01,  pv: 1, name: "Volatility 100" },
+        v10_1s:   { min: 0.20,  step: 0.01,  pv: 1, name: "Volatility 10 (1s)" },
+        v25_1s:   { min: 0.005, step: 0.001, pv: 1, name: "Volatility 25 (1s)" },
+        v50_1s:   { min: 0.005, step: 0.001, pv: 1, name: "Volatility 50 (1s)" },
+        v75_1s:   { min: 0.005, step: 0.001, pv: 1, name: "Volatility 75 (1s)" },
+        v100_1s:  { min: 0.10,  step: 0.01,  pv: 1, name: "Volatility 100 (1s)" },
+        boom500:  { min: 0.20,  step: 0.01,  pv: 1, name: "Boom 500" },
+        boom1000: { min: 0.20,  step: 0.01,  pv: 1, name: "Boom 1000" },
+        crash500: { min: 0.20,  step: 0.01,  pv: 1, name: "Crash 500" },
+        crash1000:{ min: 0.20,  step: 0.01,  pv: 1, name: "Crash 1000" },
+        step:     { min: 0.10,  step: 0.10,  pv: 10,name: "Step Index" },
+        jump10:   { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 10" },
+        jump25:   { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 25" },
+        jump50:   { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 50" },
+        jump100:  { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 100" }
     };
 
-    let currentDirection = 'buy';
+    let direction = 'buy';
 
     function setDirection(dir, btn) {
-        currentDirection = dir;
+        direction = dir;
         document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     }
 
-    function showSpecs() {
+    function updateSpecs() {
         const key = document.getElementById('instrument').value;
-        const specsEl = document.getElementById('specs');
-        
+        const el = document.getElementById('specs');
         if (!key || !instruments[key]) {
-            specsEl.textContent = '';
+            el.textContent = '';
             return;
         }
-        
         const i = instruments[key];
-        specsEl.textContent = `Min Lot: ${i.min}  •  Step: ${i.step}  •  ≈ $${i.pv}/point per 1 lot`;
+        el.textContent = `Min Lot: ${i.min}  •  Step: ${i.step}  •  ≈ $${i.pv} per point (1 lot)`;
     }
 
     function roundToStep(value, step) {
         const decimals = (step.toString().split('.')[1] || '').length;
-        return Number((Math.floor((value / step) + 0.0000001) * step).toFixed(decimals));
+        return Number((Math.floor(value / step + 1e-8) * step).toFixed(decimals));
     }
 
     function calculate() {
         const key = document.getElementById('instrument').value;
         const balance = parseFloat(document.getElementById('balance').value);
-        const riskPercent = parseFloat(document.getElementById('risk').value);
+        const riskPct = parseFloat(document.getElementById('risk').value);
         const entry = parseFloat(document.getElementById('entry').value);
         const sl = parseFloat(document.getElementById('sl').value);
         const tp = parseFloat(document.getElementById('tp').value);
 
-        // Validation
-        if (!key) {
-            alert("Please select an instrument");
-            return;
-        }
-        if (isNaN(balance) || balance <= 0) {
-            alert("Please enter a valid account balance");
-            return;
-        }
-        if (isNaN(riskPercent) || riskPercent <= 0) {
-            alert("Please enter a valid risk percentage");
-            return;
-        }
-        if (isNaN(entry)) {
-            alert("Please enter Entry Price");
-            return;
-        }
-        if (isNaN(sl)) {
-            alert("Please enter Stop Loss Price");
-            return;
-        }
-        if (isNaN(tp)) {
-            alert("Please enter Take Profit Price");
-            return;
-        }
+        if (!key) return alert("Please select an instrument");
+        if (isNaN(balance) || balance <= 0) return alert("Enter a valid balance");
+        if (isNaN(riskPct) || riskPct <= 0) return alert("Enter a valid risk %");
+        if (isNaN(entry)) return alert("Enter Entry Price");
+        if (isNaN(sl)) return alert("Enter Stop Loss Price");
+        if (isNaN(tp)) return alert("Enter Take Profit Price");
 
         const instr = instruments[key];
-        const riskAmount = balance * (riskPercent / 100);
-        const slDistance = Math.abs(entry - sl);
-        const tpDistance = Math.abs(entry - tp);
+        const riskAmount = balance * (riskPct / 100);
+        const slDist = Math.abs(entry - sl);
+        const tpDist = Math.abs(entry - tp);
 
-        if (slDistance === 0) {
-            alert("Stop Loss cannot be the same as Entry Price");
-            return;
-        }
+        if (slDist === 0) return alert("Stop Loss cannot be the same as Entry");
 
-        // Calculate lots
-        let lots = riskAmount / (slDistance * instr.pv);
+        // Core calculation
+        let lots = riskAmount / (slDist * instr.pv);
         lots = roundToStep(lots, instr.step);
 
-        // Check minimum lot
         let warning = "";
         if (lots < instr.min) {
             lots = 0;
-            warning = `Calculated size is below minimum lot (${instr.min}). Try higher risk % or tighter SL.`;
+            warning = `Below minimum lot (${instr.min}). Increase risk % or reduce SL distance.`;
         }
 
-        // Final values
-        const actualRisk = lots * slDistance * instr.pv;
-        const potentialProfit = lots * tpDistance * instr.pv;
-        const riskReward = tpDistance / slDistance;
+        const actualRisk = lots * slDist * instr.pv;
+        const potentialProfit = lots * tpDist * instr.pv;
+        const rr = tpDist / slDist;
 
-        // Display results
+        // Show results
         document.getElementById('results').style.display = 'block';
         document.getElementById('lotSize').textContent = lots.toFixed(3);
         document.getElementById('riskAmount').textContent = '$' + actualRisk.toFixed(2);
         document.getElementById('profitAmount').textContent = '$' + potentialProfit.toFixed(2);
-        document.getElementById('slDistance').textContent = slDistance.toFixed(2) + ' pts';
-        document.getElementById('tpDistance').textContent = tpDistance.toFixed(2) + ' pts';
-        document.getElementById('rr').textContent = '1 : ' + riskReward.toFixed(2);
+        document.getElementById('slDistance').textContent = slDist.toFixed(1) + ' pts';
+        document.getElementById('tpDistance').textContent = tpDist.toFixed(1) + ' pts';
+        document.getElementById('rr').textContent = '1 : ' + rr.toFixed(2);
 
-        let info = `Target risk: $${riskAmount.toFixed(2)} (${riskPercent}% of balance)`;
-        if (warning) {
-            info += `<span class="warning">${warning}</span>`;
-        }
-
+        let info = `Target risk: $${riskAmount.toFixed(2)} (${riskPct}% of balance)`;
+        if (warning) info += `<span class="warning">${warning}</span>`;
         document.getElementById('infoText').innerHTML = info;
-    }
-
-    function toggleTheme() {
-        // Simple theme toggle (you can expand later)
-        alert("Theme toggle can be expanded. Currently dark mode only for maximum reliability.");
     }
 </script>
 </body>
