@@ -1,184 +1,242 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Deriv Risk Calculator</title>
 <style>
-:root {
-    --bg: #111;
-    --card: #1c1c1c;
-    --text: #fff;
-    --dim: #aaa;
-    --border: #333;
-    --input: #262626;
-    --buy: #22c55e;
-    --sell: #ef4444;
-}
-[data-theme="light"] {
-    --bg: #f3f4f6;
-    --card: #fff;
-    --text: #111;
-    --dim: #666;
-    --border: #ddd;
-    --input: #f9fafb;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: system-ui, -apple-system, sans-serif;
-    padding: 20px;
-    min-height: 100vh;
-}
-.container {
-    max-width: 460px;
-    margin: 0 auto;
-    background: var(--card);
-    border-radius: 16px;
-    padding: 24px;
-    border: 1px solid var(--border);
-}
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-h1 { font-size: 1.3rem; font-weight: 700; }
-button.theme {
-    background: var(--input);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px 12px;
-    border-radius: 8px;
-    cursor: pointer;
-}
-.section {
-    font-size: 0.7rem;
-    color: var(--dim);
-    text-transform: uppercase;
-    margin: 18px 0 8px;
-    font-weight: 600;
-}
-label {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--dim);
-    margin-bottom: 4px;
-}
-input, select {
-    width: 100%;
-    padding: 12px;
-    background: var(--input);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-size: 1rem;
-    margin-bottom: 12px;
-}
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-.dir {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 12px;
-}
-.dir button {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid var(--border);
-    background: var(--input);
-    border-radius: 10px;
-    color: var(--text);
-    font-weight: 600;
-    cursor: pointer;
-    opacity: 0.6;
-}
-.dir button.active.buy {
-    background: rgba(34,197,94,0.15);
-    border-color: var(--buy);
-    color: var(--buy);
-    opacity: 1;
-}
-.dir button.active.sell {
-    background: rgba(239,68,68,0.15);
-    border-color: var(--sell);
-    color: var(--sell);
-    opacity: 1;
-}
-.calc {
-    width: 100%;
-    padding: 15px;
-    background: var(--text);
-    color: var(--card);
-    border: none;
-    border-radius: 10px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin-top: 8px;
-}
-#results {
-    display: none;
-    margin-top: 24px;
-    background: var(--input);
-    border-radius: 14px;
-    padding: 20px;
-}
-.big {
-    text-align: center;
-    margin-bottom: 16px;
-}
-.big .value {
-    font-size: 1.8rem;
-    font-weight: 800;
-}
-.row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-}
-.box {
-    background: var(--card);
-    padding: 12px;
-    border-radius: 10px;
-    text-align: center;
-}
-.box .label {
-    font-size: 0.7rem;
-    color: var(--dim);
-    margin-bottom: 4px;
-}
-.box .value {
-    font-size: 1.2rem;
-    font-weight: 700;
-}
-.green { color: var(--buy); }
-.red { color: var(--sell); }
-.info {
-    font-size: 0.85rem;
-    color: var(--dim);
-    text-align: center;
-    margin-top: 12px;
-    line-height: 1.4;
-}
-.warning {
-    color: #ef4444;
-    font-weight: 600;
-    display: block;
-    margin-top: 8px;
-}
-.specs {
-    font-size: 0.72rem;
-    color: var(--dim);
-    margin-top: -6px;
-    margin-bottom: 10px;
-}
+    :root {
+        --bg: #0f0f11;
+        --card: #18181b;
+        --border: #27272a;
+        --text: #fafafa;
+        --muted: #a1a1aa;
+        --accent: #3b82f6;
+        --green: #22c55e;
+        --red: #ef4444;
+        --input: #27272a;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+        background: var(--bg);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 460px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 28px 24px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 28px;
+    }
+
+    h1 {
+        font-size: 1.35rem;
+        font-weight: 700;
+    }
+
+    .theme-btn {
+        background: var(--input);
+        border: 1px solid var(--border);
+        color: var(--text);
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .section {
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin: 22px 0 10px;
+    }
+
+    label {
+        display: block;
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+    }
+
+    input, select {
+        width: 100%;
+        background: var(--input);
+        border: 1px solid var(--border);
+        color: var(--text);
+        padding: 13px 14px;
+        border-radius: 12px;
+        font-size: 1rem;
+        outline: none;
+        transition: 0.2s;
+    }
+
+    input:focus, select:focus {
+        border-color: #52525b;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .direction {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 4px;
+    }
+
+    .dir-btn {
+        padding: 13px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--input);
+        color: var(--muted);
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .dir-btn.active.buy {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: var(--green);
+        color: var(--green);
+    }
+
+    .dir-btn.active.sell {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: var(--red);
+        color: var(--red);
+    }
+
+    .calc-btn {
+        width: 100%;
+        margin-top: 18px;
+        padding: 16px;
+        background: white;
+        color: #111;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .calc-btn:hover {
+        opacity: 0.9;
+    }
+
+    /* Results */
+    #results {
+        display: none;
+        margin-top: 28px;
+        background: #141416;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-main {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .result-main .label {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-bottom: 6px;
+    }
+
+    .result-main .value {
+        font-size: 2rem;
+        font-weight: 800;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .result-item {
+        background: var(--card);
+        padding: 14px 10px;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .result-item .label {
+        font-size: 0.7rem;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .result-item .value {
+        font-size: 1.15rem;
+        font-weight: 700;
+    }
+
+    .green { color: var(--green); }
+    .red { color: var(--red); }
+
+    .info {
+        margin-top: 16px;
+        font-size: 0.85rem;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.5;
+    }
+
+    .warning {
+        color: var(--red);
+        font-weight: 600;
+        display: block;
+        margin-top: 8px;
+    }
+
+    .specs {
+        font-size: 0.75rem;
+        color: var(--muted);
+        margin-top: 6px;
+    }
 </style>
 </head>
 <body>
@@ -186,20 +244,21 @@ input, select {
 <div class="container">
     <header>
         <h1>Deriv Risk Calculator</h1>
-        <button class="theme" onclick="toggleTheme()">☀</button>
+        <button class="theme-btn" onclick="toggleTheme()">☀</button>
     </header>
 
-    <div class="section">1. Instrument</div>
-    <select id="instrument" onchange="updateSpecs()">
-        <option value="">Select Instrument</option>
-        <optgroup label="Volatility">
+    <!-- Instrument -->
+    <div class="section">Instrument</div>
+    <select id="instrument" onchange="showSpecs()">
+        <option value="">Select instrument...</option>
+        <optgroup label="Volatility Indices">
             <option value="v10">Volatility 10</option>
             <option value="v25">Volatility 25</option>
             <option value="v50">Volatility 50</option>
             <option value="v75">Volatility 75</option>
             <option value="v100">Volatility 100</option>
         </optgroup>
-        <optgroup label="Volatility 1s">
+        <optgroup label="Volatility (1s)">
             <option value="v10_1s">Volatility 10 (1s)</option>
             <option value="v25_1s">Volatility 25 (1s)</option>
             <option value="v50_1s">Volatility 50 (1s)</option>
@@ -222,35 +281,32 @@ input, select {
     </select>
     <div class="specs" id="specs"></div>
 
-    <div class="section">2. Account</div>
+    <!-- Account -->
+    <div class="section">Account</div>
     <div class="grid">
         <div>
             <label>Balance</label>
-            <input type="number" id="balance" placeholder="1000">
+            <input type="number" id="balance" placeholder="1000" step="any">
         </div>
         <div>
             <label>Risk %</label>
-            <input type="number" id="risk" placeholder="1" step="0.1">
+            <input type="number" id="risk" placeholder="1.0" step="0.1">
         </div>
     </div>
-    <label>Currency</label>
-    <select id="currency">
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="USDT">USDT</option>
-    </select>
 
-    <div class="section">3. Trade Setup</div>
-    <div class="dir">
-        <button class="buy active" onclick="setDir(this, 'buy')">BUY</button>
-        <button class="sell" onclick="setDir(this, 'sell')">SELL</button>
+    <!-- Trade -->
+    <div class="section">Trade Setup</div>
+    
+    <label>Direction</label>
+    <div class="direction">
+        <button class="dir-btn buy active" onclick="setDirection('buy', this)">BUY</button>
+        <button class="dir-btn sell" onclick="setDirection('sell', this)">SELL</button>
     </div>
 
-    <label>Entry Price</label>
-    <input type="number" id="entry" placeholder="Entry price" step="any">
+    <label style="margin-top:14px;">Entry Price</label>
+    <input type="number" id="entry" placeholder="Enter price" step="any">
 
-    <div class="grid">
+    <div class="grid" style="margin-top:12px;">
         <div>
             <label>Stop Loss</label>
             <input type="number" id="sl" placeholder="SL price" step="any">
@@ -261,93 +317,174 @@ input, select {
         </div>
     </div>
 
-    <button class="calc" onclick="calculate()">Calculate Position Size</button>
+    <button class="calc-btn" onclick="calculate()">Calculate Position Size</button>
 
+    <!-- Results -->
     <div id="results">
-        <div class="big">
+        <div class="result-main">
             <div class="label">Recommended Lot Size</div>
-            <div class="value" id="lotSize">—</div>
+            <div class="value" id="lotSize">0.000</div>
         </div>
 
-        <div class="row">
-            <div class="box">
+        <div class="result-grid">
+            <div class="result-item">
                 <div class="label">Risk Amount</div>
-                <div class="value red" id="riskAmount">—</div>
+                <div class="value red" id="riskAmount">$0.00</div>
             </div>
-            <div class="box">
+            <div class="result-item">
                 <div class="label">Potential Profit</div>
-                <div class="value green" id="profitAmount">—</div>
+                <div class="value green" id="profitAmount">$0.00</div>
             </div>
-        </div>
-
-        <div class="row">
-            <div class="box">
+            <div class="result-item">
                 <div class="label">SL Distance</div>
-                <div class="value" id="slDist">—</div>
+                <div class="value" id="slDistance">0 pts</div>
             </div>
-            <div class="box">
+            <div class="result-item">
                 <div class="label">TP Distance</div>
-                <div class="value" id="tpDist">—</div>
+                <div class="value" id="tpDistance">0 pts</div>
             </div>
         </div>
 
-        <div class="box" style="margin-bottom:12px;">
+        <div class="result-item" style="margin-top:12px;">
             <div class="label">Risk : Reward</div>
-            <div class="value" id="rr">—</div>
+            <div class="value" id="rr">1 : 0.00</div>
         </div>
 
-        <div class="info" id="info"></div>
+        <div class="info" id="infoText"></div>
     </div>
 </div>
 
 <script>
-const instruments = {
-    v10: { min: 0.50, step: 0.01, pv: 1 },
-    v25: { min: 0.50, step: 0.01, pv: 1 },
-    v50: { min: 4.00, step: 0.01, pv: 1 },
-    v75: { min: 0.001, step: 0.001, pv: 1 },
-    v100: { min: 0.50, step: 0.01, pv: 1 },
-    v10_1s: { min: 0.20, step: 0.01, pv: 1 },
-    v25_1s: { min: 0.005, step: 0.001, pv: 1 },
-    v50_1s: { min: 0.005, step: 0.001, pv: 1 },
-    v75_1s: { min: 0.005, step: 0.001, pv: 1 },
-    v100_1s: { min: 0.10, step: 0.01, pv: 1 },
-    boom500: { min: 0.20, step: 0.01, pv: 1 },
-    boom1000: { min: 0.20, step: 0.01, pv: 1 },
-    crash500: { min: 0.20, step: 0.01, pv: 1 },
-    crash1000: { min: 0.20, step: 0.01, pv: 1 },
-    step: { min: 0.10, step: 0.10, pv: 10 },
-    jump10: { min: 0.01, step: 0.01, pv: 1 },
-    jump25: { min: 0.01, step: 0.01, pv: 1 },
-    jump50: { min: 0.01, step: 0.01, pv: 1 },
-    jump100: { min: 0.01, step: 0.01, pv: 1 }
-};
+    // Instrument data
+    const instruments = {
+        v10:      { min: 0.50,  step: 0.01,  pv: 1 },
+        v25:      { min: 0.50,  step: 0.01,  pv: 1 },
+        v50:      { min: 4.00,  step: 0.01,  pv: 1 },
+        v75:      { min: 0.001, step: 0.001, pv: 1 },
+        v100:     { min: 0.50,  step: 0.01,  pv: 1 },
+        v10_1s:   { min: 0.20,  step: 0.01,  pv: 1 },
+        v25_1s:   { min: 0.005, step: 0.001, pv: 1 },
+        v50_1s:   { min: 0.005, step: 0.001, pv: 1 },
+        v75_1s:   { min: 0.005, step: 0.001, pv: 1 },
+        v100_1s:  { min: 0.10,  step: 0.01,  pv: 1 },
+        boom500:  { min: 0.20,  step: 0.01,  pv: 1 },
+        boom1000: { min: 0.20,  step: 0.01,  pv: 1 },
+        crash500: { min: 0.20,  step: 0.01,  pv: 1 },
+        crash1000:{ min: 0.20,  step: 0.01,  pv: 1 },
+        step:     { min: 0.10,  step: 0.10,  pv: 10 },
+        jump10:   { min: 0.01,  step: 0.01,  pv: 1 },
+        jump25:   { min: 0.01,  step: 0.01,  pv: 1 },
+        jump50:   { min: 0.01,  step: 0.01,  pv: 1 },
+        jump100:  { min: 0.01,  step: 0.01,  pv: 1 }
+    };
 
-let direction = 'buy';
+    let currentDirection = 'buy';
 
-function setDir(btn, dir) {
-    direction = dir;
-    document.querySelectorAll('.dir button').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-}
-
-function updateSpecs() {
-    const key = document.getElementById('instrument').value;
-    const el = document.getElementById('specs');
-    if (!key || !instruments[key]) {
-        el.textContent = '';
-        return;
+    function setDirection(dir, btn) {
+        currentDirection = dir;
+        document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
     }
-    const i = instruments[key];
-    el.textContent = `Min lot: ${i.min}  •  Step: ${i.step}  •  ≈ $${i.pv} per point (1 lot)`;
-}
 
-function roundLot(value, step) {
-    if (step <= 0) return value;
-    const decimals = (step.toString().split('.')[1] || '').length;
-    return Number((Math.floor(value / step) * step).toFixed(decimals));
-}
+    function showSpecs() {
+        const key = document.getElementById('instrument').value;
+        const specsEl = document.getElementById('specs');
+        
+        if (!key || !instruments[key]) {
+            specsEl.textContent = '';
+            return;
+        }
+        
+        const i = instruments[key];
+        specsEl.textContent = `Min Lot: ${i.min}  •  Step: ${i.step}  •  ≈ $${i.pv}/point per 1 lot`;
+    }
 
-function calculate() {
-    const key = document.getElementById('instrument').value;
-    const balance = parseFloat(document.getElementById
+    function roundToStep(value, step) {
+        const decimals = (step.toString().split('.')[1] || '').length;
+        return Number((Math.floor((value / step) + 0.0000001) * step).toFixed(decimals));
+    }
+
+    function calculate() {
+        const key = document.getElementById('instrument').value;
+        const balance = parseFloat(document.getElementById('balance').value);
+        const riskPercent = parseFloat(document.getElementById('risk').value);
+        const entry = parseFloat(document.getElementById('entry').value);
+        const sl = parseFloat(document.getElementById('sl').value);
+        const tp = parseFloat(document.getElementById('tp').value);
+
+        // Validation
+        if (!key) {
+            alert("Please select an instrument");
+            return;
+        }
+        if (isNaN(balance) || balance <= 0) {
+            alert("Please enter a valid account balance");
+            return;
+        }
+        if (isNaN(riskPercent) || riskPercent <= 0) {
+            alert("Please enter a valid risk percentage");
+            return;
+        }
+        if (isNaN(entry)) {
+            alert("Please enter Entry Price");
+            return;
+        }
+        if (isNaN(sl)) {
+            alert("Please enter Stop Loss Price");
+            return;
+        }
+        if (isNaN(tp)) {
+            alert("Please enter Take Profit Price");
+            return;
+        }
+
+        const instr = instruments[key];
+        const riskAmount = balance * (riskPercent / 100);
+        const slDistance = Math.abs(entry - sl);
+        const tpDistance = Math.abs(entry - tp);
+
+        if (slDistance === 0) {
+            alert("Stop Loss cannot be the same as Entry Price");
+            return;
+        }
+
+        // Calculate lots
+        let lots = riskAmount / (slDistance * instr.pv);
+        lots = roundToStep(lots, instr.step);
+
+        // Check minimum lot
+        let warning = "";
+        if (lots < instr.min) {
+            lots = 0;
+            warning = `Calculated size is below minimum lot (${instr.min}). Try higher risk % or tighter SL.`;
+        }
+
+        // Final values
+        const actualRisk = lots * slDistance * instr.pv;
+        const potentialProfit = lots * tpDistance * instr.pv;
+        const riskReward = tpDistance / slDistance;
+
+        // Display results
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('lotSize').textContent = lots.toFixed(3);
+        document.getElementById('riskAmount').textContent = '$' + actualRisk.toFixed(2);
+        document.getElementById('profitAmount').textContent = '$' + potentialProfit.toFixed(2);
+        document.getElementById('slDistance').textContent = slDistance.toFixed(2) + ' pts';
+        document.getElementById('tpDistance').textContent = tpDistance.toFixed(2) + ' pts';
+        document.getElementById('rr').textContent = '1 : ' + riskReward.toFixed(2);
+
+        let info = `Target risk: $${riskAmount.toFixed(2)} (${riskPercent}% of balance)`;
+        if (warning) {
+            info += `<span class="warning">${warning}</span>`;
+        }
+
+        document.getElementById('infoText').innerHTML = info;
+    }
+
+    function toggleTheme() {
+        // Simple theme toggle (you can expand later)
+        alert("Theme toggle can be expanded. Currently dark mode only for maximum reliability.");
+    }
+</script>
+</body>
+</html>
