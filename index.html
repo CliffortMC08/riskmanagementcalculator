@@ -3,389 +3,185 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Synthetic Indices Risk Calculator</title>
+<title>Deriv Synthetic Lot Size Calculator</title>
 <style>
-    :root {
-        --bg: #0c0c0e;
-        --card: #161618;
-        --border: #2a2a2e;
-        --text: #f4f4f5;
-        --muted: #a1a1aa;
-        --green: #22c55e;
-        --red: #ef4444;
-        --blue: #3b82f6;
-        --input: #1f1f23;
-    }
-
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
-
     body {
-        background: var(--bg);
-        color: var(--text);
-        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: #0f0f0f;
+        color: #fff;
+        margin: 0;
         padding: 20px;
         display: flex;
         justify-content: center;
     }
-
-    .container {
+    .box {
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 16px;
+        padding: 24px;
         width: 100%;
-        max-width: 480px;
-        background: var(--card);
-        border: 1px solid var(--border);
-        border-radius: 20px;
-        padding: 28px 24px;
+        max-width: 420px;
     }
-
-    header {
+    h1 {
+        font-size: 1.3rem;
+        margin: 0 0 20px 0;
         text-align: center;
-        margin-bottom: 28px;
     }
-
-    header h1 {
-        font-size: 1.4rem;
-        font-weight: 700;
-        margin-bottom: 4px;
-    }
-
-    header p {
-        font-size: 0.85rem;
-        color: var(--muted);
-    }
-
-    .section {
-        font-size: 0.72rem;
-        font-weight: 600;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin: 22px 0 10px;
-    }
-
     label {
         display: block;
         font-size: 0.8rem;
-        color: var(--muted);
-        margin-bottom: 6px;
+        color: #aaa;
+        margin: 14px 0 6px;
     }
-
     input, select {
         width: 100%;
-        background: var(--input);
-        border: 1px solid var(--border);
-        color: var(--text);
-        padding: 13px 14px;
-        border-radius: 12px;
+        padding: 12px;
+        background: #262626;
+        border: 1px solid #444;
+        border-radius: 10px;
+        color: #fff;
         font-size: 1rem;
-        outline: none;
+        box-sizing: border-box;
     }
-
-    input:focus, select:focus {
-        border-color: #52525b;
-    }
-
-    .grid {
+    .row {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 12px;
     }
-
-    .direction {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    .dir-btn {
-        padding: 13px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        background: var(--input);
-        color: var(--muted);
-        font-weight: 600;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-
-    .dir-btn.active.buy {
-        background: rgba(34, 197, 94, 0.15);
-        border-color: var(--green);
-        color: var(--green);
-    }
-
-    .dir-btn.active.sell {
-        background: rgba(239, 68, 68, 0.15);
-        border-color: var(--red);
-        color: var(--red);
-    }
-
-    .calc-btn {
+    button {
         width: 100%;
         margin-top: 20px;
-        padding: 16px;
-        background: white;
-        color: #111;
+        padding: 15px;
+        background: #fff;
+        color: #000;
         border: none;
-        border-radius: 12px;
+        border-radius: 10px;
         font-size: 1.05rem;
         font-weight: 700;
         cursor: pointer;
     }
-
-    .calc-btn:hover {
-        opacity: 0.92;
-    }
-
-    .specs {
-        font-size: 0.78rem;
-        color: var(--muted);
-        margin-top: 8px;
-        min-height: 20px;
-    }
-
-    /* Results */
-    #results {
+    #result {
         display: none;
-        margin-top: 28px;
-        background: #121214;
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        padding: 22px;
-        animation: fadeIn 0.3s ease;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(6px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .result-main {
-        text-align: center;
-        padding-bottom: 18px;
-        margin-bottom: 18px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .result-main .label {
-        font-size: 0.75rem;
-        color: var(--muted);
-        margin-bottom: 6px;
-    }
-
-    .result-main .value {
-        font-size: 2.1rem;
-        font-weight: 800;
-    }
-
-    .result-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-    }
-
-    .result-item {
-        background: var(--card);
-        padding: 14px 10px;
+        margin-top: 24px;
+        background: #111;
         border-radius: 12px;
+        padding: 18px;
+        border: 1px solid #333;
+    }
+    .big {
         text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        margin: 10px 0;
     }
-
-    .result-item .label {
-        font-size: 0.7rem;
-        color: var(--muted);
-        margin-bottom: 4px;
+    .line {
+        display: flex;
+        justify-content: space-between;
+        margin: 8px 0;
+        font-size: 0.95rem;
     }
-
-    .result-item .value {
-        font-size: 1.15rem;
-        font-weight: 700;
-    }
-
-    .green { color: var(--green); }
-    .red { color: var(--red); }
-
-    .info {
-        margin-top: 16px;
-        font-size: 0.85rem;
-        color: var(--muted);
-        text-align: center;
-        line-height: 1.5;
-    }
-
+    .green { color: #22c55e; }
+    .red { color: #ef4444; }
     .warning {
-        color: var(--red);
+        color: #ef4444;
         font-weight: 600;
-        display: block;
-        margin-top: 8px;
+        margin-top: 12px;
+        text-align: center;
+    }
+    .math {
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 12px;
+        line-height: 1.5;
+        border-top: 1px solid #333;
+        padding-top: 12px;
     }
 </style>
 </head>
 <body>
-<div class="container">
-    <header>
-        <h1>Synthetic Indices Calculator</h1>
-        <p>Position Size & Risk Manager for Deriv</p>
-    </header>
 
-    <!-- Instrument -->
-    <div class="section">Instrument</div>
-    <select id="instrument" onchange="updateSpecs()">
-        <option value="">Select instrument...</option>
-        <optgroup label="Volatility Indices">
-            <option value="v10">Volatility 10</option>
-            <option value="v25">Volatility 25</option>
-            <option value="v50">Volatility 50</option>
-            <option value="v75">Volatility 75</option>
-            <option value="v100">Volatility 100</option>
-        </optgroup>
-        <optgroup label="Volatility (1s)">
-            <option value="v10_1s">Volatility 10 (1s)</option>
-            <option value="v25_1s">Volatility 25 (1s)</option>
-            <option value="v50_1s">Volatility 50 (1s)</option>
-            <option value="v75_1s">Volatility 75 (1s)</option>
-            <option value="v100_1s">Volatility 100 (1s)</option>
-        </optgroup>
-        <optgroup label="Crash & Boom">
-            <option value="boom500">Boom 500</option>
-            <option value="boom1000">Boom 1000</option>
-            <option value="crash500">Crash 500</option>
-            <option value="crash1000">Crash 1000</option>
-        </optgroup>
-        <optgroup label="Others">
-            <option value="step">Step Index</option>
-            <option value="jump10">Jump 10</option>
-            <option value="jump25">Jump 25</option>
-            <option value="jump50">Jump 50</option>
-            <option value="jump100">Jump 100</option>
-        </optgroup>
+<div class="box">
+    <h1>Synthetic Lot Size Calculator</h1>
+
+    <label>Instrument</label>
+    <select id="instrument">
+        <option value="v75">Volatility 75 (most popular)</option>
+        <option value="v75_1s">Volatility 75 (1s)</option>
+        <option value="v100">Volatility 100</option>
+        <option value="v50">Volatility 50</option>
+        <option value="v25">Volatility 25</option>
+        <option value="v10">Volatility 10</option>
+        <option value="boom500">Boom 500</option>
+        <option value="boom1000">Boom 1000</option>
+        <option value="crash500">Crash 500</option>
+        <option value="crash1000">Crash 1000</option>
+        <option value="step">Step Index</option>
     </select>
-    <div class="specs" id="specs"></div>
 
-    <!-- Account -->
-    <div class="section">Account</div>
-    <div class="grid">
+    <div class="row">
         <div>
-            <label>Balance ($)</label>
-            <input type="number" id="balance" placeholder="1000" step="any">
+            <label>Account Balance ($)</label>
+            <input type="number" id="balance" value="1000" step="any">
         </div>
         <div>
             <label>Risk %</label>
-            <input type="number" id="risk" placeholder="1.0" step="0.1">
+            <input type="number" id="risk" value="1" step="0.1">
         </div>
     </div>
 
-    <!-- Trade Setup -->
-    <div class="section">Trade Setup</div>
+    <label>Entry Price</label>
+    <input type="number" id="entry" placeholder="e.g. 50000" step="any">
 
-    <label>Direction</label>
-    <div class="direction">
-        <button class="dir-btn buy active" onclick="setDirection('buy', this)">BUY</button>
-        <button class="dir-btn sell" onclick="setDirection('sell', this)">SELL</button>
-    </div>
+    <label>Stop Loss Price</label>
+    <input type="number" id="sl" placeholder="e.g. 49000" step="any">
 
-    <label style="margin-top:14px;">Entry Price</label>
-    <input type="number" id="entry" placeholder="Entry price" step="any">
+    <label>Take Profit Price (optional)</label>
+    <input type="number" id="tp" placeholder="e.g. 52000" step="any">
 
-    <div class="grid" style="margin-top:12px;">
-        <div>
-            <label>Stop Loss</label>
-            <input type="number" id="sl" placeholder="SL price" step="any">
+    <button onclick="calculate()">Calculate Lot Size</button>
+
+    <div id="result">
+        <div style="text-align:center; color:#aaa; font-size:0.85rem;">Recommended Lot Size</div>
+        <div class="big" id="lots">0.00</div>
+
+        <div class="line">
+            <span>Risk Amount</span>
+            <span class="red" id="riskMoney">$0.00</span>
         </div>
-        <div>
-            <label>Take Profit</label>
-            <input type="number" id="tp" placeholder="TP price" step="any">
+        <div class="line">
+            <span>SL Distance</span>
+            <span id="distance">0 points</span>
         </div>
-    </div>
-
-    <button class="calc-btn" onclick="calculate()">Calculate Position Size</button>
-
-    <!-- Results -->
-    <div id="results">
-        <div class="result-main">
-            <div class="label">Recommended Lot Size</div>
-            <div class="value" id="lotSize">0.000</div>
+        <div class="line">
+            <span>Potential Profit</span>
+            <span class="green" id="profit">$0.00</span>
         </div>
-
-        <div class="result-grid">
-            <div class="result-item">
-                <div class="label">Risk Amount</div>
-                <div class="value red" id="riskAmount">$0.00</div>
-            </div>
-            <div class="result-item">
-                <div class="label">Potential Profit</div>
-                <div class="value green" id="profitAmount">$0.00</div>
-            </div>
-            <div class="result-item">
-                <div class="label">SL Distance</div>
-                <div class="value" id="slDistance">0 pts</div>
-            </div>
-            <div class="result-item">
-                <div class="label">TP Distance</div>
-                <div class="value" id="tpDistance">0 pts</div>
-            </div>
+        <div class="line">
+            <span>Risk : Reward</span>
+            <span id="rr">—</span>
         </div>
 
-        <div class="result-item" style="margin-top:12px;">
-            <div class="label">Risk : Reward</div>
-            <div class="value" id="rr">1 : 0.00</div>
-        </div>
+        <div id="warning" class="warning"></div>
 
-        <div class="info" id="infoText"></div>
+        <div class="math" id="math"></div>
     </div>
 </div>
 
 <script>
-    // Accurate synthetic indices data
-    const instruments = {
-        v10:      { min: 0.50,  step: 0.01,  pv: 1, name: "Volatility 10" },
-        v25:      { min: 0.50,  step: 0.01,  pv: 1, name: "Volatility 25" },
-        v50:      { min: 4.00,  step: 0.01,  pv: 1, name: "Volatility 50" },
-        v75:      { min: 0.001, step: 0.001, pv: 1, name: "Volatility 75" },
-        v100:     { min: 0.50,  step: 0.01,  pv: 1, name: "Volatility 100" },
-        v10_1s:   { min: 0.20,  step: 0.01,  pv: 1, name: "Volatility 10 (1s)" },
-        v25_1s:   { min: 0.005, step: 0.001, pv: 1, name: "Volatility 25 (1s)" },
-        v50_1s:   { min: 0.005, step: 0.001, pv: 1, name: "Volatility 50 (1s)" },
-        v75_1s:   { min: 0.005, step: 0.001, pv: 1, name: "Volatility 75 (1s)" },
-        v100_1s:  { min: 0.10,  step: 0.01,  pv: 1, name: "Volatility 100 (1s)" },
-        boom500:  { min: 0.20,  step: 0.01,  pv: 1, name: "Boom 500" },
-        boom1000: { min: 0.20,  step: 0.01,  pv: 1, name: "Boom 1000" },
-        crash500: { min: 0.20,  step: 0.01,  pv: 1, name: "Crash 500" },
-        crash1000:{ min: 0.20,  step: 0.01,  pv: 1, name: "Crash 1000" },
-        step:     { min: 0.10,  step: 0.10,  pv: 10,name: "Step Index" },
-        jump10:   { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 10" },
-        jump25:   { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 25" },
-        jump50:   { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 50" },
-        jump100:  { min: 0.01,  step: 0.01,  pv: 1, name: "Jump 100" }
+    // Point value for 1.0 lot
+    const data = {
+        v75:      { min: 0.001, step: 0.001, pv: 1 },
+        v75_1s:   { min: 0.005, step: 0.001, pv: 1 },
+        v100:     { min: 0.50,  step: 0.01,  pv: 1 },
+        v50:      { min: 4.00,  step: 0.01,  pv: 1 },
+        v25:      { min: 0.50,  step: 0.01,  pv: 1 },
+        v10:      { min: 0.50,  step: 0.01,  pv: 1 },
+        boom500:  { min: 0.20,  step: 0.01,  pv: 1 },
+        boom1000: { min: 0.20,  step: 0.01,  pv: 1 },
+        crash500: { min: 0.20,  step: 0.01,  pv: 1 },
+        crash1000:{ min: 0.20,  step: 0.01,  pv: 1 },
+        step:     { min: 0.10,  step: 0.10,  pv: 10 }
     };
-
-    let direction = 'buy';
-
-    function setDirection(dir, btn) {
-        direction = dir;
-        document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-    }
-
-    function updateSpecs() {
-        const key = document.getElementById('instrument').value;
-        const el = document.getElementById('specs');
-        if (!key || !instruments[key]) {
-            el.textContent = '';
-            return;
-        }
-        const i = instruments[key];
-        el.textContent = `Min Lot: ${i.min}  •  Step: ${i.step}  •  ≈ $${i.pv} per point (1 lot)`;
-    }
-
-    function roundToStep(value, step) {
-        const decimals = (step.toString().split('.')[1] || '').length;
-        return Number((Math.floor(value / step + 1e-8) * step).toFixed(decimals));
-    }
 
     function calculate() {
         const key = document.getElementById('instrument').value;
@@ -395,46 +191,58 @@
         const sl = parseFloat(document.getElementById('sl').value);
         const tp = parseFloat(document.getElementById('tp').value);
 
-        if (!key) return alert("Please select an instrument");
-        if (isNaN(balance) || balance <= 0) return alert("Enter a valid balance");
-        if (isNaN(riskPct) || riskPct <= 0) return alert("Enter a valid risk %");
-        if (isNaN(entry)) return alert("Enter Entry Price");
-        if (isNaN(sl)) return alert("Enter Stop Loss Price");
-        if (isNaN(tp)) return alert("Enter Take Profit Price");
-
-        const instr = instruments[key];
-        const riskAmount = balance * (riskPct / 100);
-        const slDist = Math.abs(entry - sl);
-        const tpDist = Math.abs(entry - tp);
-
-        if (slDist === 0) return alert("Stop Loss cannot be the same as Entry");
-
-        // Core calculation
-        let lots = riskAmount / (slDist * instr.pv);
-        lots = roundToStep(lots, instr.step);
-
-        let warning = "";
-        if (lots < instr.min) {
-            lots = 0;
-            warning = `Below minimum lot (${instr.min}). Increase risk % or reduce SL distance.`;
+        if (isNaN(balance) || isNaN(riskPct) || isNaN(entry) || isNaN(sl)) {
+            alert("Please fill Balance, Risk %, Entry and Stop Loss");
+            return;
         }
 
-        const actualRisk = lots * slDist * instr.pv;
-        const potentialProfit = lots * tpDist * instr.pv;
-        const rr = tpDist / slDist;
+        const instr = data[key];
+        const riskMoney = balance * (riskPct / 100);
+        const distance = Math.abs(entry - sl);
+
+        if (distance === 0) {
+            alert("Stop Loss cannot be the same as Entry");
+            return;
+        }
+
+        // THE CORE FORMULA
+        let lots = riskMoney / (distance * instr.pv);
+
+        // Round down to valid step
+        lots = Math.floor(lots / instr.step) * instr.step;
+        lots = Number(lots.toFixed(4));
+
+        // Check minimum
+        let warning = "";
+        if (lots < instr.min) {
+            warning = `Result is below minimum lot (${instr.min}). Increase risk % or use smaller SL distance.`;
+            lots = 0;
+        }
+
+        // Profit calculation
+        let profit = 0;
+        let rrText = "—";
+        if (!isNaN(tp)) {
+            const tpDistance = Math.abs(entry - tp);
+            profit = lots * tpDistance * instr.pv;
+            rrText = "1 : " + (tpDistance / distance).toFixed(2);
+        }
 
         // Show results
-        document.getElementById('results').style.display = 'block';
-        document.getElementById('lotSize').textContent = lots.toFixed(3);
-        document.getElementById('riskAmount').textContent = '$' + actualRisk.toFixed(2);
-        document.getElementById('profitAmount').textContent = '$' + potentialProfit.toFixed(2);
-        document.getElementById('slDistance').textContent = slDist.toFixed(1) + ' pts';
-        document.getElementById('tpDistance').textContent = tpDist.toFixed(1) + ' pts';
-        document.getElementById('rr').textContent = '1 : ' + rr.toFixed(2);
+        document.getElementById('result').style.display = 'block';
+        document.getElementById('lots').textContent = lots.toFixed(3);
+        document.getElementById('riskMoney').textContent = "$" + (lots * distance * instr.pv).toFixed(2);
+        document.getElementById('distance').textContent = distance.toFixed(1) + " points";
+        document.getElementById('profit').textContent = "$" + profit.toFixed(2);
+        document.getElementById('rr').textContent = rrText;
+        document.getElementById('warning').textContent = warning;
 
-        let info = `Target risk: $${riskAmount.toFixed(2)} (${riskPct}% of balance)`;
-        if (warning) info += `<span class="warning">${warning}</span>`;
-        document.getElementById('infoText').innerHTML = info;
+        // Show the math so you can verify
+        document.getElementById('math').innerHTML = `
+            Risk Amount = $${balance} × ${riskPct}% = <b>$${riskMoney.toFixed(2)}</b><br>
+            SL Distance = ${distance.toFixed(1)} points<br>
+            Lot Size = $${riskMoney.toFixed(2)} ÷ (${distance.toFixed(1)} × $${instr.pv}) = <b>${(riskMoney / (distance * instr.pv)).toFixed(4)}</b>
+        `;
     }
 </script>
 </body>
