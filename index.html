@@ -1,137 +1,353 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deriv Single-Trade Risk Calculator</title>
-    <style>
-        :root {
-            --bg-body: #0f0f0f;
-            --bg-card: #1a1a1a;
-            --text-main: #ffffff;
-            --text-dim: #a1a1aa;
-            --border: #2e2e2e;
-            --input-bg: #262626;
-            --radius: 12px;
-            --buy: #22c55e;
-            --sell: #ef4444;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deriv Risk Calculator</title>
+<style>
+:root {
+    --bg: #111;
+    --card: #1c1c1c;
+    --text: #fff;
+    --dim: #aaa;
+    --border: #333;
+    --input: #262626;
+    --buy: #22c55e;
+    --sell: #ef4444;
+}
+[data-theme="light"] {
+    --bg: #f3f4f6;
+    --card: #fff;
+    --text: #111;
+    --dim: #666;
+    --border: #ddd;
+    --input: #f9fafb;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+}
+.container {
+    max-width: 460px;
+    margin: 0 auto;
+    background: var(--card);
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid var(--border);
+}
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+h1 { font-size: 1.3rem; font-weight: 700; }
+button.theme {
+    background: var(--input);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.section {
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-transform: uppercase;
+    margin: 18px 0 8px;
+    font-weight: 600;
+}
+label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--dim);
+    margin-bottom: 4px;
+}
+input, select {
+    width: 100%;
+    padding: 12px;
+    background: var(--input);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 12px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.dir {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.dir button {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid var(--border);
+    background: var(--input);
+    border-radius: 10px;
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    opacity: 0.6;
+}
+.dir button.active.buy {
+    background: rgba(34,197,94,0.15);
+    border-color: var(--buy);
+    color: var(--buy);
+    opacity: 1;
+}
+.dir button.active.sell {
+    background: rgba(239,68,68,0.15);
+    border-color: var(--sell);
+    color: var(--sell);
+    opacity: 1;
+}
+.calc {
+    width: 100%;
+    padding: 15px;
+    background: var(--text);
+    color: var(--card);
+    border: none;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 8px;
+}
+#results {
+    display: none;
+    margin-top: 24px;
+    background: var(--input);
+    border-radius: 14px;
+    padding: 20px;
+}
+.big {
+    text-align: center;
+    margin-bottom: 16px;
+}
+.big .value {
+    font-size: 1.8rem;
+    font-weight: 800;
+}
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.box {
+    background: var(--card);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: center;
+}
+.box .label {
+    font-size: 0.7rem;
+    color: var(--dim);
+    margin-bottom: 4px;
+}
+.box .value {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+.green { color: var(--buy); }
+.red { color: var(--sell); }
+.info {
+    font-size: 0.85rem;
+    color: var(--dim);
+    text-align: center;
+    margin-top: 12px;
+    line-height: 1.4;
+}
+.warning {
+    color: #ef4444;
+    font-weight: 600;
+    display: block;
+    margin-top: 8px;
+}
+.specs {
+    font-size: 0.72rem;
+    color: var(--dim);
+    margin-top: -6px;
+    margin-bottom: 10px;
+}
+</style>
+</head>
+<body>
 
-        [data-theme="light"] {
-            --bg-body: #f3f4f6;
-            --bg-card: #ffffff;
-            --text-main: #111827;
-            --text-dim: #6b7280;
-            --border: #e5e7eb;
-            --input-bg: #f9fafb;
-        }
+<div class="container">
+    <header>
+        <h1>Deriv Risk Calculator</h1>
+        <button class="theme" onclick="toggleTheme()">☀</button>
+    </header>
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+    <div class="section">1. Instrument</div>
+    <select id="instrument" onchange="updateSpecs()">
+        <option value="">Select Instrument</option>
+        <optgroup label="Volatility">
+            <option value="v10">Volatility 10</option>
+            <option value="v25">Volatility 25</option>
+            <option value="v50">Volatility 50</option>
+            <option value="v75">Volatility 75</option>
+            <option value="v100">Volatility 100</option>
+        </optgroup>
+        <optgroup label="Volatility 1s">
+            <option value="v10_1s">Volatility 10 (1s)</option>
+            <option value="v25_1s">Volatility 25 (1s)</option>
+            <option value="v50_1s">Volatility 50 (1s)</option>
+            <option value="v75_1s">Volatility 75 (1s)</option>
+            <option value="v100_1s">Volatility 100 (1s)</option>
+        </optgroup>
+        <optgroup label="Crash & Boom">
+            <option value="boom500">Boom 500</option>
+            <option value="boom1000">Boom 1000</option>
+            <option value="crash500">Crash 500</option>
+            <option value="crash1000">Crash 1000</option>
+        </optgroup>
+        <optgroup label="Others">
+            <option value="step">Step Index</option>
+            <option value="jump10">Jump 10</option>
+            <option value="jump25">Jump 25</option>
+            <option value="jump50">Jump 50</option>
+            <option value="jump100">Jump 100</option>
+        </optgroup>
+    </select>
+    <div class="specs" id="specs"></div>
 
-        body {
-            background: var(--bg-body);
-            color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            padding: 20px;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
+    <div class="section">2. Account</div>
+    <div class="grid">
+        <div>
+            <label>Balance</label>
+            <input type="number" id="balance" placeholder="1000">
+        </div>
+        <div>
+            <label>Risk %</label>
+            <input type="number" id="risk" placeholder="1" step="0.1">
+        </div>
+    </div>
+    <label>Currency</label>
+    <select id="currency">
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="USDT">USDT</option>
+    </select>
 
-        .container {
-            width: 100%;
-            max-width: 480px;
-            background: var(--bg-card);
-            border-radius: 20px;
-            padding: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-        }
+    <div class="section">3. Trade Setup</div>
+    <div class="dir">
+        <button class="buy active" onclick="setDir(this, 'buy')">BUY</button>
+        <button class="sell" onclick="setDir(this, 'sell')">SELL</button>
+    </div>
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    <label>Entry Price</label>
+    <input type="number" id="entry" placeholder="Entry price" step="any">
 
-        h1 { font-size: 1.25rem; font-weight: 800; }
+    <div class="grid">
+        <div>
+            <label>Stop Loss</label>
+            <input type="number" id="sl" placeholder="SL price" step="any">
+        </div>
+        <div>
+            <label>Take Profit</label>
+            <input type="number" id="tp" placeholder="TP price" step="any">
+        </div>
+    </div>
 
-        .theme-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1rem;
-        }
+    <button class="calc" onclick="calculate()">Calculate Position Size</button>
 
-        .section-title {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin: 18px 0 10px;
-        }
+    <div id="results">
+        <div class="big">
+            <div class="label">Recommended Lot Size</div>
+            <div class="value" id="lotSize">—</div>
+        </div>
 
-        .form-group { margin-bottom: 14px; }
+        <div class="row">
+            <div class="box">
+                <div class="label">Risk Amount</div>
+                <div class="value red" id="riskAmount">—</div>
+            </div>
+            <div class="box">
+                <div class="label">Potential Profit</div>
+                <div class="value green" id="profitAmount">—</div>
+            </div>
+        </div>
 
-        label {
-            display: block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--text-dim);
-            margin-bottom: 5px;
-        }
+        <div class="row">
+            <div class="box">
+                <div class="label">SL Distance</div>
+                <div class="value" id="slDist">—</div>
+            </div>
+            <div class="box">
+                <div class="label">TP Distance</div>
+                <div class="value" id="tpDist">—</div>
+            </div>
+        </div>
 
-        input, select {
-            width: 100%;
-            background: var(--input-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border);
-            padding: 13px 14px;
-            font-size: 1rem;
-            border-radius: var(--radius);
-            outline: none;
-        }
+        <div class="box" style="margin-bottom:12px;">
+            <div class="label">Risk : Reward</div>
+            <div class="value" id="rr">—</div>
+        </div>
 
-        input:focus, select:focus { border-color: #555; }
+        <div class="info" id="info"></div>
+    </div>
+</div>
 
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
+<script>
+const instruments = {
+    v10: { min: 0.50, step: 0.01, pv: 1 },
+    v25: { min: 0.50, step: 0.01, pv: 1 },
+    v50: { min: 4.00, step: 0.01, pv: 1 },
+    v75: { min: 0.001, step: 0.001, pv: 1 },
+    v100: { min: 0.50, step: 0.01, pv: 1 },
+    v10_1s: { min: 0.20, step: 0.01, pv: 1 },
+    v25_1s: { min: 0.005, step: 0.001, pv: 1 },
+    v50_1s: { min: 0.005, step: 0.001, pv: 1 },
+    v75_1s: { min: 0.005, step: 0.001, pv: 1 },
+    v100_1s: { min: 0.10, step: 0.01, pv: 1 },
+    boom500: { min: 0.20, step: 0.01, pv: 1 },
+    boom1000: { min: 0.20, step: 0.01, pv: 1 },
+    crash500: { min: 0.20, step: 0.01, pv: 1 },
+    crash1000: { min: 0.20, step: 0.01, pv: 1 },
+    step: { min: 0.10, step: 0.10, pv: 10 },
+    jump10: { min: 0.01, step: 0.01, pv: 1 },
+    jump25: { min: 0.01, step: 0.01, pv: 1 },
+    jump50: { min: 0.01, step: 0.01, pv: 1 },
+    jump100: { min: 0.01, step: 0.01, pv: 1 }
+};
 
-        .dir-switch { display: flex; gap: 10px; }
+let direction = 'buy';
 
-        .dir-btn {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid var(--border);
-            background: var(--input-bg);
-            border-radius: var(--radius);
-            text-align: center;
-            font-weight: 700;
-            cursor: pointer;
-            opacity: 0.55;
-            transition: 0.2s;
-            user-select: none;
-        }
+function setDir(btn, dir) {
+    direction = dir;
+    document.querySelectorAll('.dir button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+}
 
-        .dir-btn.buy.active {
-            background: rgba(34, 197, 94, 0.15);
-            border-color: var(--buy);
-            color: var(--buy);
-            opacity: 1;
-        }
+function updateSpecs() {
+    const key = document.getElementById('instrument').value;
+    const el = document.getElementById('specs');
+    if (!key || !instruments[key]) {
+        el.textContent = '';
+        return;
+    }
+    const i = instruments[key];
+    el.textContent = `Min lot: ${i.min}  •  Step: ${i.step}  •  ≈ $${i.pv} per point (1 lot)`;
+}
 
-        .dir-btn.sell.active {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: var(--sell);
-            color: var(--sell);
-            opacity: 1;
-       
+function roundLot(value, step) {
+    if (step <= 0) return value;
+    const decimals = (step.toString().split('.')[1] || '').length;
+    return Number((Math.floor(value / step) * step).toFixed(decimals));
+}
+
+function calculate() {
+    const key = document.getElementById('instrument').value;
+    const balance = parseFloat(document.getElementById
