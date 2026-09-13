@@ -15,7 +15,6 @@
             --radius: 12px;
             --buy: #22c55e;
             --sell: #ef4444;
-            --accent: #3b82f6;
         }
 
         [data-theme="light"] {
@@ -27,13 +26,12 @@
             --input-bg: #f9fafb;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background: var(--bg-body);
             color: var(--text-main);
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
             padding: 20px;
             min-height: 100vh;
             display: flex;
@@ -55,14 +53,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
-        h1 {
-            margin: 0;
-            font-size: 1.25rem;
-            font-weight: 800;
-        }
+        h1 { font-size: 1.25rem; font-weight: 800; }
 
         .theme-btn {
             background: var(--input-bg);
@@ -71,7 +65,7 @@
             padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
         .section-title {
@@ -112,11 +106,8 @@
             gap: 12px;
         }
 
-        /* Direction */
-        .dir-switch {
-            display: flex;
-            gap: 10px;
-        }
+        .dir-switch { display: flex; gap: 10px; }
+
         .dir-btn {
             flex: 1;
             padding: 12px;
@@ -128,257 +119,19 @@
             cursor: pointer;
             opacity: 0.55;
             transition: 0.2s;
+            user-select: none;
         }
+
         .dir-btn.buy.active {
-            background: rgba(34, 197, 94, 0.12);
+            background: rgba(34, 197, 94, 0.15);
             border-color: var(--buy);
             color: var(--buy);
             opacity: 1;
         }
+
         .dir-btn.sell.active {
-            background: rgba(239, 68, 68, 0.12);
+            background: rgba(239, 68, 68, 0.15);
             border-color: var(--sell);
             color: var(--sell);
             opacity: 1;
-        }
-
-        button.calc-btn {
-            width: 100%;
-            background: var(--text-main);
-            color: var(--bg-card);
-            border: none;
-            padding: 16px;
-            font-size: 1.05rem;
-            font-weight: 800;
-            border-radius: var(--radius);
-            cursor: pointer;
-            margin-top: 8px;
-        }
-        button.calc-btn:hover { opacity: 0.92; }
-
-        /* Results */
-        #results {
-            display: none;
-            margin-top: 24px;
-            background: var(--input-bg);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid var(--border);
-            animation: fadeUp 0.3s ease;
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-main {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 18px;
-        }
-
-        .result-box {
-            text-align: center;
-            padding: 12px 8px;
-            background: var(--bg-card);
-            border-radius: 12px;
-        }
-
-        .result-label {
-            font-size: 0.68rem;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-
-        .result-value {
-            font-size: 1.35rem;
-            font-weight: 800;
-        }
-
-        .result-value.green { color: var(--buy); }
-        .result-value.red { color: var(--sell); }
-
-        .result-full {
-            text-align: center;
-            padding: 14px;
-            background: var(--bg-card);
-            border-radius: 12px;
-            margin-bottom: 12px;
-        }
-
-        .result-full .result-value {
-            font-size: 1.6rem;
-        }
-
-        .result-info {
-            font-size: 0.82rem;
-            color: var(--text-dim);
-            text-align: center;
-            margin-top: 12px;
-            line-height: 1.5;
-        }
-
-        .warning {
-            color: #ef4444;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        .specs {
-            font-size: 0.72rem;
-            color: var(--text-dim);
-            margin-top: 6px;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <header>
-        <h1>Deriv Risk Calculator</h1>
-        <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀</button>
-    </header>
-
-    <!-- INSTRUMENT -->
-    <div class="section-title">1. Instrument</div>
-    <div class="form-group">
-        <select id="instrument">
-            <option value="" disabled selected>Select Instrument</option>
-            <optgroup label="Volatility Indices">
-                <option value="v10">Volatility 10</option>
-                <option value="v25">Volatility 25</option>
-                <option value="v50">Volatility 50</option>
-                <option value="v75">Volatility 75</option>
-                <option value="v100">Volatility 100</option>
-            </optgroup>
-            <optgroup label="Volatility (1s)">
-                <option value="v10_1s">Volatility 10 (1s)</option>
-                <option value="v25_1s">Volatility 25 (1s)</option>
-                <option value="v50_1s">Volatility 50 (1s)</option>
-                <option value="v75_1s">Volatility 75 (1s)</option>
-                <option value="v100_1s">Volatility 100 (1s)</option>
-            </optgroup>
-            <optgroup label="Crash & Boom">
-                <option value="boom500">Boom 500</option>
-                <option value="boom1000">Boom 1000</option>
-                <option value="crash500">Crash 500</option>
-                <option value="crash1000">Crash 1000</option>
-            </optgroup>
-            <optgroup label="Others">
-                <option value="step">Step Index</option>
-                <option value="jump10">Jump 10</option>
-                <option value="jump25">Jump 25</option>
-                <option value="jump50">Jump 50</option>
-                <option value="jump100">Jump 100</option>
-            </optgroup>
-        </select>
-        <div class="specs" id="specsText"></div>
-    </div>
-
-    <!-- ACCOUNT -->
-    <div class="section-title">2. Account</div>
-    <div class="grid-2">
-        <div class="form-group">
-            <label>Balance</label>
-            <input type="number" id="balance" placeholder="1000" step="0.01">
-        </div>
-        <div class="form-group">
-            <label>Risk %</label>
-            <input type="number" id="risk" placeholder="1.0" step="0.1">
-        </div>
-    </div>
-    <div class="form-group">
-        <label>Currency</label>
-        <select id="currency">
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="GBP">GBP</option>
-            <option value="USDT">USDT</option>
-        </select>
-    </div>
-
-    <!-- TRADE -->
-    <div class="section-title">3. Trade Setup</div>
-    <div class="form-group">
-        <label>Direction</label>
-        <div class="dir-switch">
-            <div class="dir-btn buy active" onclick="setDir('buy')">BUY</div>
-            <div class="dir-btn sell" onclick="setDir('sell')">SELL</div>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>Entry Price</label>
-        <input type="number" id="entry" placeholder="e.g. 45231.50" step="any">
-    </div>
-
-    <div class="grid-2">
-        <div class="form-group">
-            <label>Stop Loss Price</label>
-            <input type="number" id="sl" placeholder="SL Price" step="any">
-        </div>
-        <div class="form-group">
-            <label>Take Profit Price</label>
-            <input type="number" id="tp" placeholder="TP Price" step="any">
-        </div>
-    </div>
-
-    <button class="calc-btn" onclick="calculate()">Calculate Position Size</button>
-
-    <!-- RESULTS -->
-    <div id="results">
-        <div class="result-full">
-            <div class="result-label">Recommended Lot Size</div>
-            <div class="result-value" id="lotSize">0.00</div>
-        </div>
-
-        <div class="result-main">
-            <div class="result-box">
-                <div class="result-label">Risk Amount</div>
-                <div class="result-value red" id="riskAmount">$0.00</div>
-            </div>
-            <div class="result-box">
-                <div class="result-label">Potential Profit</div>
-                <div class="result-value green" id="profitAmount">$0.00</div>
-            </div>
-            <div class="result-box">
-                <div class="result-label">SL Distance</div>
-                <div class="result-value" id="slDist">0 pts</div>
-            </div>
-            <div class="result-box">
-                <div class="result-label">TP Distance</div>
-                <div class="result-value" id="tpDist">0 pts</div>
-            </div>
-        </div>
-
-        <div class="result-box" style="margin-bottom:12px;">
-            <div class="result-label">Risk : Reward</div>
-            <div class="result-value" id="rrRatio">1 : 0.00</div>
-        </div>
-
-        <div class="result-info" id="infoText"></div>
-    </div>
-</div>
-
-<script>
-    // Accurate instrument data (pointValue = $ per 1.0 lot per 1 point)
-    const instruments = {
-        v10:      { name: "Volatility 10",      min: 0.50,  step: 0.01,  pointValue: 1 },
-        v25:      { name: "Volatility 25",      min: 0.50,  step: 0.01,  pointValue: 1 },
-        v50:      { name: "Volatility 50",      min: 4.00,  step: 0.01,  pointValue: 1 },
-        v75:      { name: "Volatility 75",      min: 0.001, step: 0.001, pointValue: 1 },
-        v100:     { name: "Volatility 100",     min: 0.50,  step: 0.01,  pointValue: 1 },
-        v10_1s:   { name: "Volatility 10 (1s)", min: 0.20,  step: 0.01,  pointValue: 1 },
-        v25_1s:   { name: "Volatility 25 (1s)", min: 0.005, step: 0.001, pointValue: 1 },
-        v50_1s:   { name: "Volatility 50 (1s)", min: 0.005, step: 0.001, pointValue: 1 },
-        v75_1s:   { name: "Volatility 75 (1s)", min: 0.005, step: 0.001, pointValue: 1 },
-        v100_1s:  { name: "Volatility 100 (1s)",min: 0.10,  step: 0.01,  pointValue: 1 },
-        boom500:  { name: "Boom 500",           min: 0.20,  step: 0.01,  pointValue: 1 },
-        boom1000: { name: "Boom 1000",          min: 0.20,  step: 0.01,  pointValue: 1 },
-        crash500: { name: "Crash 500",          min: 0.20,  step: 0.01,  pointValue: 1 },
-        crash1000:{ name: "Crash 1000",         min: 0.20,  step: 0.01,  pointValue: 1 },
-        step:     { name: "Step Index",         min: 0.10,  step: 0.10,  pointValue: 10 },
-        jump10:   { name: "Jump 10",            min: 0.01,  step: 0.01,  pointValue: 1 },
-        jump25:
+       
